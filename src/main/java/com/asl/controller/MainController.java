@@ -29,30 +29,30 @@ public class MainController {
 
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	@Autowired
-	@Qualifier("jdbcTemplatePrimary")
-	private JdbcTemplate jdbcTemplatePrimary;
-
-	@Autowired
-	@Qualifier("jdbcTemplateFrom")
-	private JdbcTemplate jdbcTemplateFrom;
-
-	@Autowired
-	@Qualifier("jdbcTemplateTo")
-	private JdbcTemplate jdbcTemplateTo;
+	@Autowired @Qualifier("jdbcTemplatePrimary") private JdbcTemplate jdbcTemplatePrimary;
+	@Autowired @Qualifier("jdbcTemplateFrom") private JdbcTemplate jdbcTemplateFrom;
+	@Autowired @Qualifier("jdbcTemplateTo") private JdbcTemplate jdbcTemplateTo;
 
 	@Value("${primary.table.name:recordstatus}")
 	private String primaryDBTable;
-
 	@Value("${from.table.name:fromtable}")
 	private String fromDBTable;
-
 	@Value("${to.table.name:totable}")
 	private String toDBTable;
+
+	@Value("${primary.table.columns}")
+	private List<String> primaryTableColumns;
+	@Value("#{${from.table.columns}}")
+	private Map<String,String> fromTableColumns;
+	@Value("${to.table.columns}")
+	private List<String> toTableColumns;
+	@Value("#{${primary.table.insert.columns}}")
+	private Map<String,String> primaryTableInsertColumns;
 
 	@GetMapping
 	public String sayHello() {
 		doDataTransport();
+
 		return "Application is running OK.";
 	}
 
@@ -63,15 +63,34 @@ public class MainController {
 
 		// READ DATA FROM SOURCE DB
 		List<Map<String, Object>> sourceData = readDataFromSourceTable(lastRecordDate);
-		if(log.isDebugEnabled()) {
-			sourceData.stream().forEach(r -> {
-				log.debug(r.get("id") + " - " + r.get("branch") + " - " + r.get("date"));
-			});
+		if(sourceData.isEmpty()) {
+			log.debug("===> No new source data found....");
+			return;
 		}
 
-		// INSERT SOURCE DATA TO DESTINATION DATA
+		// INSERT SOURCE DATA TO DESTINATION DB
 		boolean status = insertSourceDataToDestination(sourceData);
 		System.out.println(status);
+	}
+
+	private String generateValuesFromMap(Map<String, String> propertiesMap, Map<String, Object> map) {
+		StringBuilder values = new StringBuilder();
+		propertiesMap.entrySet().stream().forEach(e -> {
+			values.append("'"+ getModifiedValue(map.get(e.getKey()), e.getValue()) +"',");
+		});
+		int lastComma = values.toString().lastIndexOf(',');
+		return values.toString().substring(0, lastComma);
+	}
+
+	private String getModifiedValue(Object data, String dataType) {
+		if(data == null) return "";
+		if("DATE".equalsIgnoreCase(dataType)) {
+			return SDF.format((Date) data);
+		} else if ("INTEGER".equalsIgnoreCase(dataType)) {
+			return ((Integer) data).toString();
+		} else {
+			return (String) data;
+		}
 	}
 
 	@Transactional
@@ -79,23 +98,22 @@ public class MainController {
 		if(sourceData == null || sourceData.isEmpty()) return false;
 
 		for(Map<String, Object> map : sourceData) {
-
-			Integer id = (Integer) map.get("id");
-			String value = (String) map.get("branch");
-			Date date = (Date) map.get("date");
-
-			StringBuilder sql = new StringBuilder("INSERT INTO " + toDBTable + " ( ");
-			sql.append(" id, value, date ) VALUES ('"+ id +"','"+ value +"','"+ SDF.format(date) +"') ");
-
+			StringBuilder sql = new StringBuilder("INSERT INTO " + toDBTable)
+										.append(" ("+ getColumnsString(toTableColumns) +") ")
+										.append(" VALUES ")
+										.append(" ("+ generateValuesFromMap(fromTableColumns, map) +") ");
+			System.out.println(sql.toString());
 			log.debug("==> Isert query {}", sql.toString());
-			int count = jdbcTemplateTo.update(sql.toString());
+			//int count = jdbcTemplateTo.update(sql.toString());
 		}
 
 		// INSERT LAST DATA TO RECORD STATUS
 		Map<String, Object> map = sourceData.get(sourceData.size() - 1);
 		String value = (String) map.get("branch");
 		Date date = (Date) map.get("date");
-		StringBuilder sql = new StringBuilder("INSERT INTO " + primaryDBTable + " (name, date) VALUES ('"+ value +"','"+ SDF.format(date) +"') ");
+		StringBuilder sql = new StringBuilder("INSERT INTO " + primaryDBTable + " (value, date) VALUES ("+ generateValuesFromMap(primaryTableInsertColumns, map) +") ");
+		System.out.println(sql.toString());
+		
 		int count = jdbcTemplatePrimary.update(sql.toString());
 
 		return true;
@@ -105,27 +123,39 @@ public class MainController {
 		StringBuilder sql = new StringBuilder("SELECT * FROM " + primaryDBTable + " ORDER BY date DESC LIMIT 1");
 
 		List<Map<String, Object>> result = jdbcTemplatePrimary.queryForList(sql.toString());
-		if(log.isDebugEnabled()) {
-			result.stream().forEach(r -> {
-				log.debug(r.get("id") + " - " + r.get("name") + " - " + r.get("date"));
-			});
-		}
 
 		Date lastRecordDate = null;
 		if(!result.isEmpty()) {
 			Map<String, Object> rowMap = result.stream().findFirst().orElse(null);
-			lastRecordDate = (Date) rowMap.get("date");
+			if(rowMap.get("date") != null) lastRecordDate = (Date) rowMap.get("date");
 		}
-		System.out.println(lastRecordDate);
+
+		log.debug("Last record date : {}", lastRecordDate);
 		return lastRecordDate;
 	}
 
 	private List<Map<String, Object>> readDataFromSourceTable(Date date){
-		StringBuilder sql = new StringBuilder("SELECT * FROM " + fromDBTable);
-		if(date != null) {
-			sql.append(" WHERE date > '"+ SDF.format(date) +"' ");
-		}
-		log.debug("==> From selection : {}", sql.toString());
+		StringBuilder sql = new StringBuilder("SELECT "+ getColumnsString(fromTableColumns) +" FROM " + fromDBTable);
+		if(date != null) sql.append(" WHERE date > '"+ SDF.format(date) +"' ");
+		log.debug("==> Source data selection query : {}", sql.toString());
 		return jdbcTemplateFrom.queryForList(sql.toString());
+	}
+
+	private String getColumnsString(List<String> columnsList) {
+		StringBuilder columns = new StringBuilder();
+		columnsList.stream().forEach(c -> {
+			columns.append(c + ",");
+		});
+		int lastComma = columns.toString().lastIndexOf(',');
+		return columns.toString().substring(0, lastComma);
+	}
+
+	private String getColumnsString(Map<String,String> columnsList) {
+		StringBuilder columns = new StringBuilder();
+		columnsList.entrySet().stream().forEach(c -> {
+			columns.append(c.getKey() + ",");
+		});
+		int lastComma = columns.toString().lastIndexOf(',');
+		return columns.toString().substring(0, lastComma);
 	}
 }
