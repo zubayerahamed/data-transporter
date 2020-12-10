@@ -6,6 +6,11 @@ VERSION : 1.0.0-SNAPSHOT
 DEVELOPED BY : ZUBAYER AHAMED
 ```
 
+## Build
+```sh
+mvn clean install
+```
+
 ## Dcoumentation
 
 Basic Properties
