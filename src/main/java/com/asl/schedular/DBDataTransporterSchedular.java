@@ -21,7 +21,7 @@ public class DBDataTransporterSchedular {
 
 	@Autowired private DataTransportService service;
 
-	@Scheduled(initialDelay = 2000L, fixedDelayString = "${data.transport.delay}")
+	@Scheduled(initialDelay = 10000L, fixedDelayString = "${data.transport.delay}")
 	private void doDataTransport() {
 		log.info("===> Schedular running at : {}", new Date());
 		service.doDataTransport();
