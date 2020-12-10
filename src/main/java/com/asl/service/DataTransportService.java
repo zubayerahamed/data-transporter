@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -31,35 +32,50 @@ public class DataTransportService {
 	@Autowired @Qualifier("jdbcTemplateFrom") private JdbcTemplate jdbcTemplateFrom;
 	@Autowired @Qualifier("jdbcTemplateTo") private JdbcTemplate jdbcTemplateTo;
 
+	// PRIMARY TABLES CONFIG
 	@Value("${primary.table.name:recordstatus}")
 	private String primaryDBTable;
-	@Value("${from.table.name:fromtable}")
-	private String fromDBTable;
-	@Value("${to.table.name:totable}")
-	private String toDBTable;
-
 	@Value("${primary.table.columns}")
 	private List<String> primaryTableColumns;
-	@Value("#{${primary.table.insert.columns}}")
-	private Map<String,String> primaryTableInsertColumns;
+	@Value("#{${primary.table.values.columns}}")
+	private Map<String,String> primaryTableValuesColumns;
+	@Value("${primary.table.insert.columns}")
+	private List<String> primaryTableInsertColumns;
+	@Value("${primary.table.read.orderby}")
+	private String pOrderBy;
+	@Value("${primary.table.read.condition.column}")
+	private String fetchConditionColumn;
 
+	// SOURCE TABLE CONFIG
+	@Value("${from.table.name:fromtable}")
+	private String fromDBTable;
 	@Value("#{${from.table.columns}}")
 	private Map<String,String> fromTableColumns;
-	@Value("${from.table.condition.date.column.name}")
-	private String fromTableConditionColumn;
+	@Value("#{${from.table.read.condition.column}}")
+	private Map<String, String> fromTableConditionColumn;
 
-	@Value("${to.table.columns}")
-	private List<String> toTableColumns;
+	// DESTINATION TABLE CONFIG
+	@Value("${to.table.name:totable}")
+	private String toDBTable;
+	@Value("${to.table.insert.columns}")
+	private List<String> toTableInsertColumns;
+	@Value("#{${to.table.values.columns}}")
+	private Map<String,String> toTableValuesColumns;
 
 	/**
 	 * Data transport start point
 	 */
 	public void doDataTransport() {
 		// GET LAST RECORD DATE FROM PPRIMARY DB
-		Date lastRecordDate = getLatestRecordDate();
+		String latestRecordValue = null;
+		if("date".equalsIgnoreCase(fetchConditionColumn)) {
+			latestRecordValue = (Date) getLatestRecord() != null ? SDF.format((Date) getLatestRecord()) : null;
+		} else {
+			latestRecordValue = (String) getLatestRecord();
+		}
 
 		// READ DATA FROM SOURCE DB
-		List<Map<String, Object>> sourceData = readDataFromSourceTable(lastRecordDate);
+		List<Map<String, Object>> sourceData = readDataFromSourceTable(latestRecordValue);
 		if(sourceData.isEmpty()) {
 			log.info("===> No new source data found to do transport");
 			return;
@@ -84,19 +100,17 @@ public class DataTransportService {
 	 * GET LATEST RECORD DATE
 	 * @return {@link Date}
 	 */
-	private Date getLatestRecordDate() {
-		StringBuilder sql = new StringBuilder("SELECT * FROM " + primaryDBTable + " ORDER BY date DESC LIMIT 1");
+	private Object getLatestRecord() {
+		StringBuilder sql = new StringBuilder("SELECT * FROM " + primaryDBTable + " ORDER BY "+ pOrderBy +" DESC LIMIT 1");
 
 		List<Map<String, Object>> result = jdbcTemplatePrimary.queryForList(sql.toString());
 
-		Date lastRecordDate = null;
 		if(!result.isEmpty()) {
 			Map<String, Object> rowMap = result.stream().findFirst().orElse(null);
-			if(rowMap.get("date") != null) lastRecordDate = (Date) rowMap.get("date");
+			return rowMap.get(fetchConditionColumn);
 		}
 
-		log.debug("Last record date : {}", lastRecordDate);
-		return lastRecordDate;
+		return null;
 	}
 
 	/**
@@ -104,10 +118,20 @@ public class DataTransportService {
 	 * @param date
 	 * @return List&lt;Map&lt;String, Object>> results
 	 */
-	private List<Map<String, Object>> readDataFromSourceTable(Date date){
-		StringBuilder sql = new StringBuilder("SELECT "+ getColumnsString(fromTableColumns) +" FROM " + fromDBTable);
-		if(date != null) sql.append(" WHERE FORMAT("+ fromTableConditionColumn +",'yyyy-MM-dd HH:mm:ss') > '"+ SDF.format(date) +"' ");
-		log.debug("==> Source data selection query : {}", sql.toString());
+	private List<Map<String, Object>> readDataFromSourceTable(String latestRecordValue){
+		StringBuilder sql = new StringBuilder("SELECT "+ getColumnsString(fromTableColumns) +" FROM " + fromDBTable + " ");
+		if(StringUtils.isNotBlank(latestRecordValue)) {
+			Map.Entry<String, String> col = fromTableConditionColumn.entrySet().stream().findFirst().get();
+			String colName = col.getKey();
+			String colType = col.getValue();
+			if ("DATE".equalsIgnoreCase(colType)) {
+				sql.append(" WHERE FORMAT("+ colName +",'yyyy-MM-dd HH:mm:ss') > '"+ latestRecordValue +"' ");
+			} else {
+				sql.append(" WHERE "+ colName +" > "+ latestRecordValue +" ");
+			}
+		}
+
+		log.info("==> Source data selection query : {}", sql.toString());
 		return jdbcTemplateFrom.queryForList(sql.toString());
 	}
 
@@ -124,12 +148,11 @@ public class DataTransportService {
 
 		for(Map<String, Object> map : sourceData) {
 			StringBuilder sql = new StringBuilder("INSERT INTO " + toDBTable)
-										.append(" ("+ getColumnsString(toTableColumns) +") ")
+										.append(" ("+ getColumnsString(toTableInsertColumns) +") ")
 										.append(" VALUES ")
-										.append(" ("+ generateValuesFromMapForOracle(fromTableColumns, map) +") ");
+										.append(" ("+ generateValuesFromMapForOracle(toTableValuesColumns, map) +") ");
 
-			System.out.println(sql.toString());
-			log.debug("==> Isert query {}", sql.toString());
+			log.info("==> Isert query {}", sql.toString());
 			int count = jdbcTemplateTo.update(sql.toString());
 			totalInsertedRow += count;
 		}
@@ -148,15 +171,15 @@ public class DataTransportService {
 
 		Map<String, Object> map = sourceData.get(sourceData.size() - 1);
 
-		StringBuilder sql = new StringBuilder("INSERT INTO " + primaryDBTable + " (value, date) VALUES ("+ generateValuesFromMap(primaryTableInsertColumns, map) +") ");
+		StringBuilder sql = new StringBuilder("INSERT INTO " + primaryDBTable + " ("+ getColumnsString(primaryTableInsertColumns) +") VALUES ("+ generateValuesFromMap(primaryTableValuesColumns, map) +") ");
 
 		return jdbcTemplatePrimary.update(sql.toString());
 	}
 
-	private String generateValuesFromMapForOracle(Map<String, String> propertiesMap, Map<String, Object> map) {
+	private String generateValuesFromMapForOracle(Map<String, String> propertiesMap, Map<String, Object> sourceDataMap) {
 		StringBuilder values = new StringBuilder();
 		propertiesMap.entrySet().stream().forEach(e -> {
-			String data = getModifiedValue(map.get(e.getKey()), e.getValue());
+			String data = getModifiedValue(sourceDataMap.get(e.getKey()), e.getValue());
 			if(e.getValue().equalsIgnoreCase("DATE")) {
 				String datevalue = "TO_TIMESTAMP('"+ data +"', 'YYYY-MM-DD HH24:MI:SS.FF')";
 				values.append(datevalue +",");

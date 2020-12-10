@@ -1,0 +1,225 @@
+# MySQL DB
+CREATE TABLE `recordstatus` (
+  `id` int(11) NOT NULL,
+  `value` varchar(255) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Oracle DB
+CREATE TABLE XXSSGIL_WB_TRIP_DTLS(
+    TRIP_NO INT,
+    LIGHT_WT_TIMESTAMP TIMESTAMP,
+    LOAD_WT_TIMESTAMP TIMESTAMP,
+    LIGHT_WT_BY VARCHAR2(100),
+    LOAD_WT_BY VARCHAR2(100),
+    LOAD_WT_IN_KG INT,
+    LIGHT_WT_IN_KG INT
+)
+
+
+# MsSQL DB
+CREATE TABLE XXSSGIL_WB_INTEGRATION (
+    TRANSACTION_ID INT primary key,
+    TRIP_NUMBER INT,
+    LIGHT_WT_IN_KG INT,
+    LIGHT_WEIGHT_TIME_STAMP DATETIME,
+    LOAD_WT_IN_KG INT,
+    LOAD_WEIGHT_TIME_STAMP DATETIME,
+    LIGHT_WEIGHT_BY VARCHAR(100),  
+    LOAD_WEIGHT_BY VARCHAR(100),  
+    second_LIGHT_WEIGHT INT ,
+    CREATE_BY VARCHAR(100),
+    CREATE_DATE DATETIME,
+    UPDATE_BY VARCHAR(100),
+    UPDATE_DATE DATETIME,
+    TOLERANCE_WEIGHT VARCHAR(50),
+    ATTRIBUTE1 VARCHAR(100),
+    ATTRIBUTE2 VARCHAR(100),
+    ATTRIBUTE3 VARCHAR(100),
+    ATTRIBUTE6 INT,
+    ATTRIBUTE7 INT,
+    ATTRIBUTE8 INT,
+    ATTRIBUTE10 DATETIME,
+    ATTRIBUTE11 DATETIME
+)
+
+/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+INSERT INTO XXSSGIL_WB_INTEGRATION 
+    (TRANSACTION_ID,
+    TRIP_NUMBER,
+    LIGHT_WT_IN_KG,
+    LIGHT_WEIGHT_TIME_STAMP,
+    LOAD_WT_IN_KG,
+    LOAD_WEIGHT_TIME_STAMP,
+    LIGHT_WEIGHT_BY,
+    LOAD_WEIGHT_BY,
+    second_LIGHT_WEIGHT,
+    CREATE_BY,
+    CREATE_DATE,
+    UPDATE_BY,
+    UPDATE_DATE)
+VALUES 
+    ('1',
+    '10662960',
+    '14000',
+    '01-jan-2020',
+    '8500',
+    '01-jan-2020',
+    '1603',
+    '1603',
+    NULL,
+    '1603',
+    '01-jan-2020',
+    '1603',
+    '01-jan-2020');
+             
+/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+INSERT INTO XXSSGIL_WB_INTEGRATION 
+    (TRANSACTION_ID,
+    TRIP_NUMBER,
+    LIGHT_WT_IN_KG,
+    LIGHT_WEIGHT_TIME_STAMP,
+    LOAD_WT_IN_KG,
+    LOAD_WEIGHT_TIME_STAMP,
+    LIGHT_WEIGHT_BY,
+    LOAD_WEIGHT_BY,
+    second_LIGHT_WEIGHT,
+    CREATE_BY,
+    CREATE_DATE,
+    UPDATE_BY,
+    UPDATE_DATE)
+VALUES 
+    ('2',
+    '10662961',
+    '10500',
+    '01-jan-2020',
+    '8900',
+    '01-jan-2020',
+    '1603',
+    '1603',
+    NULL,
+    '1603',
+    '01-jan-2020',
+    '1603',
+    '01-jan-2020');   
+             
+/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+INSERT INTO XXSSGIL_WB_INTEGRATION 
+    (TRANSACTION_ID,
+    TRIP_NUMBER,
+    LIGHT_WT_IN_KG,
+    LIGHT_WEIGHT_TIME_STAMP,
+    LOAD_WT_IN_KG,
+    LOAD_WEIGHT_TIME_STAMP,
+    LIGHT_WEIGHT_BY,
+    LOAD_WEIGHT_BY,
+    second_LIGHT_WEIGHT,
+    CREATE_BY,
+    CREATE_DATE,
+    UPDATE_BY,
+    UPDATE_DATE)
+VALUES 
+    ('3',
+    '10662964',
+    '10500',
+    '01-jan-2020',
+    '8700',
+    '01-jan-2020',
+    '1603',
+    '1603',
+    NULL,
+    '1603',
+    '01-jan-2020',
+    '1603',
+    '01-jan-2020');
+             
+/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+INSERT INTO XXSSGIL_WB_INTEGRATION 
+    (TRANSACTION_ID,
+    TRIP_NUMBER,
+    LIGHT_WT_IN_KG,
+    LIGHT_WEIGHT_TIME_STAMP,
+    LOAD_WT_IN_KG,
+    LOAD_WEIGHT_TIME_STAMP,
+    LIGHT_WEIGHT_BY,
+    LOAD_WEIGHT_BY,
+    second_LIGHT_WEIGHT,
+    CREATE_BY,
+    CREATE_DATE,
+    UPDATE_BY,
+    UPDATE_DATE)
+VALUES 
+    ('4',
+    '10662966',
+    '10100',
+    '01-jan-2020',
+    '8100',
+    '01-jan-2020',
+    '1603',
+    '1603',
+    NULL,
+    '1603',
+    '01-jan-2020',
+    '1603',
+    '01-jan-2020');
+    
+/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+INSERT INTO XXSSGIL_WB_INTEGRATION 
+    (TRANSACTION_ID,
+    TRIP_NUMBER,
+    LIGHT_WT_IN_KG,
+    LIGHT_WEIGHT_TIME_STAMP,
+    LOAD_WT_IN_KG,
+    LOAD_WEIGHT_TIME_STAMP,
+    LIGHT_WEIGHT_BY,
+    LOAD_WEIGHT_BY,
+    second_LIGHT_WEIGHT,
+    CREATE_BY,
+    CREATE_DATE,
+    UPDATE_BY,
+    UPDATE_DATE)
+VALUES 
+    ('5',
+    '10662969',
+    '10100',
+    '01-jan-2020',
+    '8200',
+    '01-jan-2020',
+    '1603',
+    '1603',
+    NULL,
+    '1603',
+    '01-jan-2020',
+    '1603',
+    '01-jan-2020');
+             
+/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+INSERT INTO XXSSGIL_WB_INTEGRATION 
+    (TRANSACTION_ID,
+    TRIP_NUMBER,
+    LIGHT_WT_IN_KG,
+    LIGHT_WEIGHT_TIME_STAMP,
+    LOAD_WT_IN_KG,
+    LOAD_WEIGHT_TIME_STAMP,
+    LIGHT_WEIGHT_BY,
+    LOAD_WEIGHT_BY,
+    second_LIGHT_WEIGHT,
+    CREATE_BY,
+    CREATE_DATE,
+    UPDATE_BY,
+    UPDATE_DATE)
+VALUES 
+    ('6',
+    '10662962',
+    '10900',
+    '01-jan-2020',
+    '8200',
+    '01-jan-2020',
+    '1603',
+    '1603',
+    NULL,
+    '1603',
+    '01-jan-2020',
+    '1603',
+    '01-jan-2020');
