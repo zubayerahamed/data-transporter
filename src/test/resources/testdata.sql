@@ -1,8 +1,9 @@
 # MySQL DB
-CREATE TABLE `recordstatus` (
-  `id` int(11) NOT NULL,
-  `value` varchar(255) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+CREATE TABLE angola.`recordstatus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `value` varchar(255) DEFAULT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

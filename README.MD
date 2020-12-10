@@ -33,7 +33,7 @@ Primary Table (For tracking last transfered record)
 | primary.table.read.orderby | Read order by column | value |
 | primary.table.read.condition.column | Read condition column | value |
 | primary.table.insert.columns | Data insert to columns | value |
-| primary.table.values.columns | Data insert to columns values | {TRANSACTION_ID:"INTEGER"} |
+| primary.table.values.columns | Data insert to columns values (Must match with source column) | {TRANSACTION_ID:"INTEGER"} |
 
 Source Table
 | Key | Des | Example |
