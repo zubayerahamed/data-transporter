@@ -3,8 +3,6 @@ package com.asl.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import com.asl.service.ASLSessionManager;
