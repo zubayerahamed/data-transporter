@@ -45,7 +45,7 @@ CREATE TABLE XXSSGIL_WB_INTEGRATION (
     ATTRIBUTE11 DATETIME
 )
 
-/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+-- Some sample data to insert ino MsSQL DB
 INSERT INTO XXSSGIL_WB_INTEGRATION 
     (TRANSACTION_ID,
     TRIP_NUMBER,
@@ -64,18 +64,18 @@ VALUES
     ('1',
     '10662960',
     '14000',
-    '01-jan-2020',
+    '2020-12-12 18:00:00',
     '8500',
-    '01-jan-2020',
+    '2020-12-12 18:00:00',
     '1603',
     '1603',
     NULL,
     '1603',
-    '01-jan-2020',
+    '2020-12-12 18:00:00',
     '1603',
-    '01-jan-2020');
-             
-/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+    '2020-12-12 18:00:00');
+
+
 INSERT INTO XXSSGIL_WB_INTEGRATION 
     (TRANSACTION_ID,
     TRIP_NUMBER,
@@ -91,21 +91,21 @@ INSERT INTO XXSSGIL_WB_INTEGRATION
     UPDATE_BY,
     UPDATE_DATE)
 VALUES 
-    ('2',
-    '10662961',
-    '10500',
-    '01-jan-2020',
-    '8900',
-    '01-jan-2020',
+    ('1',
+    '10662960',
+    '14000',
+    '2020-12-12 18:10:00',
+    '8500',
+    '2020-12-12 18:10:00',
     '1603',
     '1603',
     NULL,
     '1603',
-    '01-jan-2020',
+    '2020-12-12 18:10:00',
     '1603',
-    '01-jan-2020');   
-             
-/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+    '2020-12-12 18:10:00');
+
+
 INSERT INTO XXSSGIL_WB_INTEGRATION 
     (TRANSACTION_ID,
     TRIP_NUMBER,
@@ -121,21 +121,20 @@ INSERT INTO XXSSGIL_WB_INTEGRATION
     UPDATE_BY,
     UPDATE_DATE)
 VALUES 
-    ('3',
-    '10662964',
-    '10500',
-    '01-jan-2020',
-    '8700',
-    '01-jan-2020',
+    ('1',
+    '10662960',
+    '14000',
+    '2020-12-12 18:20:00',
+    '8500',
+    '2020-12-12 18:20:00',
     '1603',
     '1603',
     NULL,
     '1603',
-    '01-jan-2020',
+    '2020-12-12 18:20:00',
     '1603',
-    '01-jan-2020');
-             
-/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
+    '2020-12-12 18:20:00');
+
 INSERT INTO XXSSGIL_WB_INTEGRATION 
     (TRANSACTION_ID,
     TRIP_NUMBER,
@@ -151,76 +150,16 @@ INSERT INTO XXSSGIL_WB_INTEGRATION
     UPDATE_BY,
     UPDATE_DATE)
 VALUES 
-    ('4',
-    '10662966',
-    '10100',
-    '01-jan-2020',
-    '8100',
-    '01-jan-2020',
+    ('1',
+    '10662960',
+    '14000',
+    '2020-12-12 18:30:00',
+    '8500',
+    '2020-12-12 18:30:00',
     '1603',
     '1603',
     NULL,
     '1603',
-    '01-jan-2020',
+    '2020-12-12 18:30:00',
     '1603',
-    '01-jan-2020');
-    
-/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
-INSERT INTO XXSSGIL_WB_INTEGRATION 
-    (TRANSACTION_ID,
-    TRIP_NUMBER,
-    LIGHT_WT_IN_KG,
-    LIGHT_WEIGHT_TIME_STAMP,
-    LOAD_WT_IN_KG,
-    LOAD_WEIGHT_TIME_STAMP,
-    LIGHT_WEIGHT_BY,
-    LOAD_WEIGHT_BY,
-    second_LIGHT_WEIGHT,
-    CREATE_BY,
-    CREATE_DATE,
-    UPDATE_BY,
-    UPDATE_DATE)
-VALUES 
-    ('5',
-    '10662969',
-    '10100',
-    '01-jan-2020',
-    '8200',
-    '01-jan-2020',
-    '1603',
-    '1603',
-    NULL,
-    '1603',
-    '01-jan-2020',
-    '1603',
-    '01-jan-2020');
-             
-/* Formatted on 12/9/2020 4:48:25 PM (QP5 v5.163.1008.3004) */
-INSERT INTO XXSSGIL_WB_INTEGRATION 
-    (TRANSACTION_ID,
-    TRIP_NUMBER,
-    LIGHT_WT_IN_KG,
-    LIGHT_WEIGHT_TIME_STAMP,
-    LOAD_WT_IN_KG,
-    LOAD_WEIGHT_TIME_STAMP,
-    LIGHT_WEIGHT_BY,
-    LOAD_WEIGHT_BY,
-    second_LIGHT_WEIGHT,
-    CREATE_BY,
-    CREATE_DATE,
-    UPDATE_BY,
-    UPDATE_DATE)
-VALUES 
-    ('6',
-    '10662962',
-    '10900',
-    '01-jan-2020',
-    '8200',
-    '01-jan-2020',
-    '1603',
-    '1603',
-    NULL,
-    '1603',
-    '01-jan-2020',
-    '1603',
-    '01-jan-2020');
+    '2020-12-12 18:30:00');
