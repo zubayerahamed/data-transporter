@@ -85,9 +85,10 @@ public class FileDataTransportService extends AbstractDataTransportService {
 		if(obj != null) {
 			th = (TrackingHistory) obj;
 		} else {
+			boolean fileExist = true;
 			// Check from file now 
 			String fileNameWithDirectory = getFileNameWithDirectory(fileName, fileLocation);
-			log.info("File name with directory: {}", fileNameWithDirectory);
+			log.info("===> File name with directory: {}", fileNameWithDirectory);
 			try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(fileNameWithDirectory));) {
 				String line = reader.readLine();
 				String[] data = new String[2];
@@ -96,7 +97,46 @@ public class FileDataTransportService extends AbstractDataTransportService {
 				System.out.println(th.toString());
 			} catch (IOException e) {
 				log.error("ERROR IS : {}, {}", e.getMessage(), e);
+				fileExist = false;
 			}
+
+			// If file not exist for current date, then search for previous date and get last record
+			if(!fileExist) {
+				fileNameWithDirectory = getPreviousFileNameWithDirectory(fileName, fileLocation);
+				log.info("===> Previous File name with directory: {}", fileNameWithDirectory);
+				try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(fileNameWithDirectory));) {
+					String line = reader.readLine();
+					String[] data = new String[2];
+					if(StringUtils.isNotBlank(line)) data = line.split(",");
+					th = new TrackingHistory(data);
+					System.out.println(th.toString());
+				} catch (IOException e) {
+					log.error("ERROR IS : {}, {}", e.getMessage(), e);
+				}
+			}
+
+			// If record exist, write it to new file for today and continue rest of process work 
+			if(th != null) {
+				// Write data to new file
+				log.info("===> Writing old data to new file");
+				List<TrackingHistory> result = new ArrayList<TrackingHistory>();
+				result.add(th);
+				List<String[]> fileLineData = new ArrayList<String[]>();
+				createFileLineDataFromResult(fileLineData, result);
+
+				fileNameWithDirectory = getFileNameWithDirectory(fileName, fileLocation);
+				try (StringWriter writer = new StringWriter(); 
+						CSVWriter csvWriter = new CSVWriter(writer, ',', '"', '/', "\n");
+						FileWriter fw = new FileWriter(fileNameWithDirectory, true); 
+						BufferedWriter bw = new BufferedWriter(fw)) {
+					csvWriter.writeAll(fileLineData);
+					csvWriter.close();
+					bw.append(writer.getBuffer().toString());
+				} catch (IOException e) {
+					log.error("Error is: {}, {}", e.getMessage(), e);
+				}
+			}
+
 		}
 
 		if(th == null) return null;
@@ -149,11 +189,32 @@ public class FileDataTransportService extends AbstractDataTransportService {
 
 		// Write data to file
 		List<TrackingHistory> result = new ArrayList<TrackingHistory>();
-		result.add(th);
 		List<String[]> fileLineData = new ArrayList<String[]>();
 		createFileLineDataFromResult(fileLineData, result);
 
 		String fileNameWithDirectory = getFileNameWithDirectory(fileName, fileLocation);
+
+		// Check file exist for today. if not, then search for previous date file. if found, then get the last recrod and insert it to current date file
+		File file = new File(fileNameWithDirectory);
+		if(!file.exists()) {
+			log.info("===> File not exist for today. Now search for previous file");
+			fileNameWithDirectory = getPreviousFileNameWithDirectory(fileName, fileLocation);
+			TrackingHistory prevth = null;
+			try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(fileNameWithDirectory));) {
+				String line = reader.readLine();
+				String[] data = new String[2];
+				if(StringUtils.isNotBlank(line)) data = line.split(",");
+				prevth = new TrackingHistory(data);
+				log.debug("===> Tracking History {}", th);
+			} catch (IOException e) {
+				log.error("ERROR IS : {}, {}", e.getMessage(), e);
+			}
+			if(prevth != null) {
+				result.add(prevth);
+			}
+		}
+
+		result.add(th);
 		try (StringWriter writer = new StringWriter(); 
 				CSVWriter csvWriter = new CSVWriter(writer, ',', '"', '/', "\n");
 				FileWriter fw = new FileWriter(fileNameWithDirectory, true); 

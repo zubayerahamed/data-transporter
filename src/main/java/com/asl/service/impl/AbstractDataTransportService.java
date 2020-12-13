@@ -2,6 +2,7 @@ package com.asl.service.impl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -163,5 +164,59 @@ public abstract class AbstractDataTransportService implements DataTransportServi
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		fileName = fileName + "-" + sdf.format(new Date()) + ".csv";
 		return fileLocation + fileName;
+	}
+
+	protected String getPreviousFileNameWithDirectory(String fileName, String fileLocation) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -1);
+		fileName = fileName + "-" + sdf.format(cal.getTime()) + ".csv";
+		return fileLocation + fileName;
+	}
+
+	@Override
+	@Transactional
+	public int insertDummyDataToSourceTable() {
+
+		String s = "SELECT TOP 1 TRANSACTION_ID FROM XXSSGIL_WB_INTEGRATION ORDER BY TRANSACTION_ID DESC";
+
+		int id = 1;
+		try {
+			id += jdbcTemplateFrom.queryForObject(s, Integer.class);
+		} catch (Exception e) {
+			log.error("ERROR is : {}, {}", e.getMessage(), e);
+		}
+
+		String sql = "INSERT INTO XXSSGIL_WB_INTEGRATION \r\n" + 
+				"    (TRANSACTION_ID,\r\n" + 
+				"    TRIP_NUMBER,\r\n" + 
+				"    LIGHT_WT_IN_KG,\r\n" + 
+				"    LIGHT_WEIGHT_TIME_STAMP,\r\n" + 
+				"    LOAD_WT_IN_KG,\r\n" + 
+				"    LOAD_WEIGHT_TIME_STAMP,\r\n" + 
+				"    LIGHT_WEIGHT_BY,\r\n" + 
+				"    LOAD_WEIGHT_BY,\r\n" + 
+				"    second_LIGHT_WEIGHT,\r\n" + 
+				"    CREATE_BY,\r\n" + 
+				"    CREATE_DATE,\r\n" + 
+				"    UPDATE_BY,\r\n" + 
+				"    UPDATE_DATE)\r\n" + 
+				"VALUES \r\n" + 
+				"    ('"+ id +"',\r\n" + 
+				"    '10662960',\r\n" + 
+				"    '14000',\r\n" + 
+				"    '"+ SDF.format(new Date()) +"',\r\n" + 
+				"    '8500',\r\n" + 
+				"    '"+ SDF.format(new Date()) +"',\r\n" + 
+				"    '1603',\r\n" + 
+				"    '1603',\r\n" + 
+				"    NULL,\r\n" + 
+				"    '1603',\r\n" + 
+				"    '"+ SDF.format(new Date()) +"',\r\n" + 
+				"    '1603',\r\n" + 
+				"    '"+ SDF.format(new Date()) +"')";
+		
+		return jdbcTemplateFrom.update(sql);
+		
 	}
 }

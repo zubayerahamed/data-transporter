@@ -14,4 +14,6 @@ public interface DataTransportService {
 	 * Data transport start point
 	 */
 	public void doDataTransport();
+
+	public int insertDummyDataToSourceTable();
 }

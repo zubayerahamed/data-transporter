@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<springProperty scope="context" name="LOG_PATH" source="logging.file.path"/>
+
+	<!-- DEV PROFILE -->
+	<springProfile name="dev">
+		<!-- FILE OUTPUT APPENDER -->
+		<appender name="FILE_SAVE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+			<File>${LOG_PATH}/asl.log</File>
+			<encoder>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
+			</encoder>
+			<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+				<maxIndex>50</maxIndex>
+				<FileNamePattern>${LOG_PATH}/asl.log.%i</FileNamePattern>
+			</rollingPolicy>
+			<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+				<MaxFileSize>15MB</MaxFileSize>
+			</triggeringPolicy>
+		</appender>
+	
+		<!-- STANDARD CONSOLE OUTPUT APPENDER -->
+		<appender name="CONSOLE"
+			class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>%d{dd-MM-yyyy HH:mm:ss} %magenta %highlight(%-5level) %logger{36} - %msg%n</pattern>
+			</encoder>
+		</appender>
+
+		<root level="DEBUG">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="FILE_SAVE" />
+		</root>
+	</springProfile>
+
+	<!-- PROD PROFILE -->
+	<springProfile name="prod">
+		<!-- FILE OUTPUT APPENDER -->
+		<appender name="FILE_SAVE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+			<File>${LOG_PATH}/asl.log</File>
+			<encoder>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
+			</encoder>
+			<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+				<maxIndex>50</maxIndex>
+				<FileNamePattern>${LOG_PATH}/asl.log.%i</FileNamePattern>
+			</rollingPolicy>
+			<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+				<MaxFileSize>15MB</MaxFileSize>
+			</triggeringPolicy>
+		</appender>
+
+		<root level="INFO">
+			<appender-ref ref="FILE_SAVE" />
+		</root>
+	</springProfile>
+</configuration>
