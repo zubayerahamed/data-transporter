@@ -215,6 +215,7 @@ public class FileDataTransportService extends AbstractDataTransportService {
 		}
 
 		result.add(th);
+		fileNameWithDirectory = getFileNameWithDirectory(fileName, fileLocation);
 		try (StringWriter writer = new StringWriter(); 
 				CSVWriter csvWriter = new CSVWriter(writer, ',', '"', '/', "\n");
 				FileWriter fw = new FileWriter(fileNameWithDirectory, true); 
