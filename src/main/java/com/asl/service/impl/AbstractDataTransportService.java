@@ -39,8 +39,10 @@ public abstract class AbstractDataTransportService implements DataTransportServi
 	protected String fromDBTable;
 	@Value("#{${from.table.columns}}")
 	protected Map<String,String> fromTableColumns;
-	@Value("#{${from.table.read.condition.column}}")
-	protected Map<String, String> fromTableConditionColumn;
+	@Value("${from.table.read.condition.column}")
+	protected List<String> fromTableConditionColumns;
+	@Value("${from.table.read.condition.column.type}")
+	protected String formConditionColumnsType;
 
 	// DESTINATION TABLE CONFIG
 	@Value("${to.table.name:totable}")
@@ -50,25 +52,24 @@ public abstract class AbstractDataTransportService implements DataTransportServi
 	@Value("#{${to.table.values.columns}}")
 	protected Map<String,String> toTableValuesColumns;
 
-	/**
-	 * GET DATA FROM SOURCE TABLE
-	 * @param date
-	 * @return List&lt;Map&lt;String, Object>> results
-	 */
-	protected List<Map<String, Object>> readDataFromSourceTable(String latestRecordValue){
-		StringBuilder sql = new StringBuilder("SELECT "+ getColumnsString(fromTableColumns) +" FROM " + fromDBTable + " ");
+	@Override
+	public List<Map<String, Object>> readDataFromSourceTable(String latestRecordValue){
+		StringBuilder sql = new StringBuilder("SELECT "+ getColumnsString(fromTableColumns) +" FROM " + fromDBTable);
 		if(StringUtils.isNotBlank(latestRecordValue)) {
-			Map.Entry<String, String> col = fromTableConditionColumn.entrySet().stream().findFirst().get();
-			String colName = col.getKey();
-			String colType = col.getValue();
-			if ("DATE".equalsIgnoreCase(colType)) {
-				sql.append(" WHERE FORMAT("+ colName +",'yyyy-MM-dd HH:mm:ss') > '"+ latestRecordValue +"' ");
-			} else {
-				sql.append(" WHERE "+ colName +" > "+ latestRecordValue +" ");
+			sql.append(" WHERE ");
+			for(int i = 0; i < fromTableConditionColumns.size(); i++) {
+				if(i == 0 && fromTableConditionColumns.size() > 1) sql.append(" ( ");
+				if(i != 0 && fromTableConditionColumns.size() > 1) sql.append(" OR ");
+				if("DATE".equalsIgnoreCase(formConditionColumnsType)) {
+					sql.append(" FORMAT("+ fromTableConditionColumns.get(i) +",'yyyy-MM-dd HH:mm:ss') > '"+ latestRecordValue +"' ");
+				} else {
+					sql.append(" "+ fromTableConditionColumns.get(i) +" > "+ latestRecordValue +" ");
+				}
+				if(i == fromTableConditionColumns.size() - 1 && fromTableConditionColumns.size() > 1) sql.append(" ) ");
 			}
 		}
 
-		log.info("==> Source data selection query : {}", sql.toString());
+		log.info("===> Source data selection query : {}", sql.toString());
 		return jdbcTemplateFrom.queryForList(sql.toString());
 	}
 
