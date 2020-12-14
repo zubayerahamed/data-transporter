@@ -240,4 +240,28 @@ public class FileDataTransportService extends AbstractDataTransportService {
 		});
 	}
 
+	@Override
+	public List<Map<String, Object>> searcAndGethUpdatableData(List<String> tripNumbers) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int insertSourceDataToPrimaryDB(List<Map<String, Object>> sourceData) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Object getLatestRecordFromPrimaryDB() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int updateSourceDataToPrimaryDB(List<Map<String, Object>> sourceData) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

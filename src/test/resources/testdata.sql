@@ -1,11 +1,22 @@
 # MySQL DB
-CREATE TABLE angola.recordstatus (
-  id int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE angola.trackinghistory (
+  THID int(11) NOT NULL AUTO_INCREMENT,
   TRANSACTION_ID varchar(255) DEFAULT NULL,
-  LIGHT_WEIGHT_TIME_STAMP timestamp DEFAULT NULL,
-  LOAD_WEIGHT_TIME_STAMP timestamp DEFAULT NULL,
+  --LIGHT_WEIGHT_TIME_STAMP timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+ --LOAD_WEIGHT_TIME_STAMP timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  FINAL_DATE timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   RECORD_STATUS  varchar(1) DEFAULT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (THID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+--or 
+CREATE TABLE angola.TRACKINGHISTORY (
+  THID int(11) NOT NULL AUTO_INCREMENT,
+  TRANSACTION_ID varchar(255) DEFAULT NULL,
+  LIGHT_WEIGHT_TIME_STAMP varchar(255) DEFAULT NULL,
+  LOAD_WEIGHT_TIME_STAMP varchar(255) DEFAULT NULL,
+  FINAL_DATE timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  RECORD_STATUS  varchar(1) DEFAULT NULL,
+  PRIMARY KEY (THID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
