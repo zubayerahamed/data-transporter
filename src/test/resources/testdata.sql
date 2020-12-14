@@ -1,14 +1,4 @@
 # MySQL DB
-CREATE TABLE angola.trackinghistory (
-  THID int(11) NOT NULL AUTO_INCREMENT,
-  TRANSACTION_ID varchar(255) DEFAULT NULL,
-  --LIGHT_WEIGHT_TIME_STAMP timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
- --LOAD_WEIGHT_TIME_STAMP timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  FINAL_DATE timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  RECORD_STATUS  varchar(1) DEFAULT NULL,
-  PRIMARY KEY (THID)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
---or 
 CREATE TABLE angola.TRACKINGHISTORY (
   THID int(11) NOT NULL AUTO_INCREMENT,
   TRANSACTION_ID varchar(255) DEFAULT NULL,
@@ -77,9 +67,9 @@ VALUES
     ('1',
     '10662960',
     '14000',
-     NULL,
+    '2020-12-12 18:00:00',
     '8500',
-     NULL,
+    '2020-12-12 18:00:00',
     '1603',
     '1603',
      NULL,
@@ -107,9 +97,9 @@ VALUES
     ('2',
     '10662960',
     '14000',
-     NULL,
+    '2020-12-12 18:10:00',
     '8500',
-     NULL,
+    '2020-12-12 18:10:00',
     '1603',
     '1603',
      NULL,
@@ -137,9 +127,9 @@ VALUES
     ('3',
     '10662960',
     '14000',
-     NULL,
+    '2020-12-12 18:20:00'
     '8500',
-     NULL,
+    '2020-12-12 18:20:00'
     '1603',
     '1603',
      NULL,
@@ -166,9 +156,9 @@ VALUES
     ('4',
     '10662960',
     '14000',
-     NULL,
+    '2020-12-12 18:30:00',
     '8500',
-     NULL,
+    '2020-12-12 18:30:00',
     '1603',
     '1603',
      NULL,
