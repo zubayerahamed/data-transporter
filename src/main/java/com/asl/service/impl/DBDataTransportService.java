@@ -32,8 +32,6 @@ public class DBDataTransportService extends AbstractDataTransportService {
 	// PRIMARY TABLES CONFIG
 	@Value("${primary.table.name:recordstatus}")
 	private String primaryDBTable;
-	@Value("${primary.table.columns}")
-	private List<String> primaryTableColumns;
 	@Value("#{${primary.table.values.columns}}")
 	private Map<String,String> primaryTableValuesColumns;
 	@Value("${primary.table.insert.columns}")
