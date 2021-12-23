@@ -17,6 +17,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  *
  * @since Dec 8, 2020
  */
+@Profile("!api")
 @Configuration
 public class DBConfig {
 

@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-@Profile("!file")
+@Profile({"!file & !api"})
 public class DBDataTransportService extends AbstractDataTransportService {
 
 	@Autowired @Qualifier("jdbcTemplatePrimary") private JdbcTemplate jdbcTemplatePrimary;

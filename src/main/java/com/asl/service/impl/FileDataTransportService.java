@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-@Profile("file")
+@Profile({"file & !api"})
 public class FileDataTransportService extends AbstractDataTransportService {
 
 	private static final String LAST_REC_KEY = "LASTRECORD";

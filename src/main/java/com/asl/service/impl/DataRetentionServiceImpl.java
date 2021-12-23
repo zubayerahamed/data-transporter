@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-@Profile("!file")
+@Profile({"!file & !api"})
 public class DataRetentionServiceImpl implements DataRetentionService {
 
 	protected static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

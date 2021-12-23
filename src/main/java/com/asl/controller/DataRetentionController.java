@@ -1,6 +1,7 @@
 package com.asl.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import com.asl.service.DataRetentionService;
  */
 @RestController
 @RequestMapping("/clear/data")
+@Profile("!api")
 public class DataRetentionController {
 
 	@Autowired private DataRetentionService service;
