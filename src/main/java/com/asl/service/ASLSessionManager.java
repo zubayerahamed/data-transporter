@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
  *
  * @since Dec 12, 2020
  */
-@Component
+//@Component
 public interface ASLSessionManager {
 
 	public void addToMap(String key, Object value);

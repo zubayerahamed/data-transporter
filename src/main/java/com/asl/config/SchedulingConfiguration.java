@@ -9,9 +9,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * @since Dec 8, 2020
  */
-@Configuration
-@EnableScheduling
-@ConditionalOnProperty(name = "scheduling.enabled" ,matchIfMissing = true)
+//@Configuration
+//@EnableScheduling
+//@ConditionalOnProperty(name = "scheduling.enabled" ,matchIfMissing = true)
 public class SchedulingConfiguration {
 
 }
